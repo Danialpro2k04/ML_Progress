@@ -22,7 +22,7 @@ This project is built using **4 scripts**:
 
 - `main.ipynb` – the notebook that runs everything  
 - `preprocessing.py` – cleans the dataset (removes nulls, encodes labels, splits data)  
-- `models.py` – trains multiple classifiers and picks the best one  
+- `models.py` – scales datasets for certain algorithms, trains multiple classifiers and picks the best one  
 - `hyperparameters_tuning.py` – tunes the selected model’s hyperparameters  
 
 ---
