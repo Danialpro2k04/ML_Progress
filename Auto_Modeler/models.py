@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 def train_and_evaluate_models(X_train, X_test, y_train, y_test):
     models = {
-        "Logistic Regression": LogisticRegression(max_iter=1000),
+        "Logistic Regression": LogisticRegression(max_iter=5000),
         "Decision Tree": DecisionTreeClassifier(),
         "Random Forest": RandomForestClassifier(),
         "Support Vector Machine": SVC()
@@ -19,12 +19,23 @@ def train_and_evaluate_models(X_train, X_test, y_train, y_test):
     results = {}
 
     for name, model in models.items():
-        model.fit(X_train, y_train)
-        y_pred = model.predict(X_test)
+        # Listing algos which require scaling
+        # StandardScaler is used for Logistic Regression and SVM in this case
+        if name in ['Logistic Regression', 'Support Vector Machine']:
+            scaler = StandardScaler()
+            X_train_used = scaler.fit_transform(X_train)
+            X_test_used = scaler.transform(X_test)
+        else:
+            X_train_used, X_test_used = X_train, X_test
+
+        # Train & evaluate
+        model.fit(X_train_used, y_train)
+        y_pred = model.predict(X_test_used)
         acc = accuracy_score(y_test, y_pred)
         results[name] = acc
         print(f"{name} Accuracy: {acc:.4f}")
 
+    # Results dataframe
     results_df = pd.DataFrame({
         "Model": list(results.keys()),
         "Accuracy": list(results.values())
@@ -39,9 +50,10 @@ def train_and_evaluate_models(X_train, X_test, y_train, y_test):
     plt.tight_layout()
     plt.show()
 
+    # Best model
     best_model_name = max(results, key=results.get)
     best_model = models[best_model_name]
     best_accuracy = results[best_model_name]
-
     print(f"\nBest model: {best_model_name} with accuracy {best_accuracy:.4f}")
+
     return best_model_name, best_model, best_accuracy, results
